@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sooner/helper/colors.dart';
@@ -5,6 +7,7 @@ import 'package:sooner/helper/helper_methods.dart';
 import 'package:sooner/screens/login/view.dart';
 
 import '../../shared/app_input.dart';
+import '../../shared/choose_image_source_dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
   const  RegisterScreen({Key? key}) : super(key: key);
@@ -67,7 +70,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               SizedBox(
-                height: 17.h,
+                height: 25.h,
+              ),
+              GestureDetector(
+                onTap: (){
+                  chooseImage(context);
+                },
+                child: personalImage!=null? Container(
+                  height: 125.h,
+                  width: 125.h,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.file(personalImage!),
+                ):CircleAvatar(
+                  radius: 60.r,
+                  backgroundImage:
+                   AssetImage("assets/images/img_bg.png"),
+                  foregroundImage:
+                   AssetImage("assets/images/person.png"),
+                ),
               ),
               AppInput(label: "Full Name"),
               AppInput(hintText: "Must be enter 14 number", label: "ID"),
@@ -84,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("Sign up for email updates",style: TextStyle(color: Colors.white,fontSize: 12.sp),),
+                    Text("Sign up for email updates",style: TextStyle(color: Colors.white,backgroundColor: Colors.black,fontSize: 16.sp),),
                     Checkbox(value: isChecked,activeColor: Colors.white,checkColor: colorPrimary, onChanged: (val){
                       isChecked = val!;
                       setState(() {
@@ -115,5 +138,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+  File? personalImage;
+
+  Future<void> chooseImage(BuildContext context) async {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => const ChooseImageSourceDialog(),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusDirectional.only(
+              topStart: Radius.circular(25.w), topEnd: Radius.circular(25.w)),
+        )).then((value) {
+      if (value != null) {
+        personalImage = value as File;
+        setState(() {
+
+        });
+      }
+    });
   }
 }
